@@ -1,0 +1,69 @@
+package com.bankApp.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.bankApp.dao.ClerkDao;
+import com.bankApp.dto.ClerkCreateRequest;
+import com.bankApp.entities.Clerk;
+import com.bankApp.entities.Manager;
+import com.bankApp.exceptions.BankEmployeeNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceException;
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional
+public class ClerkServiceImpl implements ClerkService{
+	
+	private ClerkDao clerkDao;
+	private ManagerService managerService;
+	
+	public ClerkServiceImpl(ClerkDao clerkDao, ManagerService managerService) {
+		this.clerkDao = clerkDao;
+		this.managerService = managerService;
+	}
+
+	@Override
+	public Clerk getById(Integer id) {
+		try {
+			return clerkDao.getById(id);
+		} catch(EntityNotFoundException ex) {
+			throw new BankEmployeeNotFoundException("Clerk with id= "+id+" not found.");
+		}
+	}
+
+	@Override
+	public List<Clerk> getAll() {
+		return clerkDao.getAll();
+	}
+
+	@Override
+	public void addClerk(ClerkCreateRequest clerkreq) {
+	    try {
+	    	Manager manager = managerService.getById(clerkreq.managerId);
+		    Clerk clerk = new Clerk();
+		    clerk.setClerkName(clerkreq.clerkName);
+		    clerk.setManager(manager);
+		    clerk.setTransactions(new ArrayList<>());
+		    clerkDao.addClerk(clerk);
+	    } catch (PersistenceException ex) {
+	        // Wrap lower-level exceptions in a service-specific exception if desired
+	        throw new RuntimeException("Failed to add account", ex);
+	    }
+	}
+
+	@Override
+	public void deleteClerk(Integer id) {
+		clerkDao.deleteClerk(id);
+	}
+
+	@Override
+	public void updateClerk(Clerk clerk) {
+		clerkDao.updateClerk(clerk);
+	}
+
+}

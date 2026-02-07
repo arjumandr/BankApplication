@@ -1,0 +1,70 @@
+package com.bankApp.dao;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.bankApp.entities.Account;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
+
+/*
+ * TODO;  Ensure dao only throws persistence exceptions/ EntityNotFoundException
+ */
+
+@Repository
+public class AccountDaoImpl implements AccountDao {
+	@PersistenceContext
+	private EntityManager em;
+	
+	@Override
+	public List<Account> getAll() {
+		return em.createQuery("SELECT a FROM Account a LEFT JOIN FETCH a.transactionList", Account.class).getResultList();
+	}
+	
+	@Override
+	public Account getById(int id) {
+		Account account = em.find(Account.class, id);
+	    if (account == null) {
+	        throw new EntityNotFoundException("Account not found");
+	    }
+	    return account;
+	}
+	
+	@Override
+	public void updateAccount(Account account) {
+	    
+	    if (account == null || account.getId() == null) {
+	    	throw new IllegalArgumentException("Account or account ID is invalid");
+	    }
+	    em.merge(account);
+
+	    // AccountDataAccessException to be made later
+	//  catch (PersistenceException e) {
+//	      throw new AccountDataAccessException("Error updating account", e);
+	//  }
+	    
+	}
+
+
+	@Override
+	public void addAccount(Account account) {
+		try {
+//			System.out.println("add account dao method called");
+			em.persist(account);
+		}
+		catch(PersistenceException ex) {
+			// to be done later
+			System.out.println("Need to handle gracefully.");
+		}
+	}
+
+	@Override
+	public void deleteAccount(Integer id) {
+			Account account = em.find(Account.class, id);
+			em.remove(account);
+	}
+}
