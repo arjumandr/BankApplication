@@ -22,6 +22,12 @@ public class ManagerServiceImpl implements ManagerService{
 		this.managerDao = managerDao;
 	}
 
+	public void approveTransaction(int transactionId) {
+//	    to be done later
+//		needs logic to access transactions by id
+	}
+
+
 	@Override
 	public Manager getById(Integer id) {
 		try {

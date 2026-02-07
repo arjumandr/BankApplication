@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import com.bankApp.dao.AccountDao;
 import com.bankApp.dto.TransactionList;
 import com.bankApp.entities.Account;
+import com.bankApp.entities.Clerk;
 import com.bankApp.entities.Transaction;
+import com.bankApp.entities.TransactionStatus;
 import com.bankApp.entities.TransactionType;
 import com.bankApp.exceptions.BankAccountNotFoundException;
 
@@ -29,38 +31,52 @@ public class TransactionServiceImpl implements TransactionService{
 	}
 
 	@Override
-	public void transfer(int fromAccId, int toAccId, BigDecimal amount) {
-		Account fromAcc = accountService.getById(fromAccId);
-		Account toAcc = accountService.getById(toAccId);
+	public void transfer(int fromAccId, int toAccId, BigDecimal amount, Clerk clerk) {
+	    Account fromAcc = accountService.getById(fromAccId);
+	    Account toAcc = accountService.getById(toAccId);
 
-		fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
+	    fromAcc.addTransaction(TransactionType.TRANSFER, amount, clerk);
+	    Transaction tx =
+	        fromAcc.getTransactions().get(fromAcc.getTransactions().size() - 1);
 
-		accountDao.updateAccount(fromAcc);
+	    if (tx.getStaus() == TransactionStatus.APPROVED) {
+	        fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
+	        toAcc.setBalance(toAcc.getBalance().add(amount));
 
-		toAcc.setBalance(toAcc.getBalance().add(amount));
+	        toAcc.addTransaction(TransactionType.TRANSFER, amount, clerk);
+	    }
 
-		accountDao.updateAccount(toAcc);
-		
-		fromAcc.addTransaction(TransactionType.TRANSFER, amount);
-		toAcc.addTransaction(TransactionType.TRANSFER, amount);
-
+	    accountDao.updateAccount(fromAcc);
+	    accountDao.updateAccount(toAcc);
 	}
 
 	@Override
-	public void deposit(int accId, BigDecimal amount) {
-		Account acc = accountService.getById(accId);
-		acc.setBalance(acc.getBalance().add(amount));
-		accountDao.updateAccount(acc);
-		acc.addTransaction(TransactionType.DEPOSIT, amount);
+	public void deposit(int accId, BigDecimal amount, Clerk clerk) {
+	    Account acc = accountService.getById(accId);
+
+	    acc.setBalance(acc.getBalance().add(amount));
+	    acc.addTransaction(TransactionType.DEPOSIT, amount, clerk);
+
+	    accountDao.updateAccount(acc);
 	}
 	
-	// need to add logic to ensure mgr approval is asked for withdrawal > 2 lakhs
+	// added new logic to ensure mgr approval is asked for withdrawal > 2 lakhs
 	@Override
-	public void withdraw(int accId, BigDecimal amount) {
-		Account acc = accountService.getById(accId);
-		acc.setBalance(acc.getBalance().subtract(amount));
-		accountDao.updateAccount(acc);
-		acc.addTransaction(TransactionType.WITHDRAWAL, amount);
+	public void withdraw(int accId, BigDecimal amount, Clerk clerk) {
+	    Account acc = accountService.getById(accId);
+
+	    // create transaction first
+	    acc.addTransaction(TransactionType.WITHDRAWAL, amount, clerk);
+
+	    Transaction lastTx =
+	        acc.getTransactions().get(acc.getTransactions().size() - 1);
+
+	    // only deduct if approved
+	    if (lastTx.getStaus() == TransactionStatus.APPROVED) {
+	        acc.setBalance(acc.getBalance().subtract(amount));
+	    }
+
+	    accountDao.updateAccount(acc);
 	}
 	
 	@Override
@@ -80,5 +96,11 @@ public class TransactionServiceImpl implements TransactionService{
 		
 		return dtoList;
 		
+	}
+
+	@Override
+	public Transaction getById(int transactionId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

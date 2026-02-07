@@ -2,10 +2,17 @@ package com.bankApp.dto;
 
 import java.math.BigDecimal;
 
+import com.bankApp.entities.Clerk;
+
 public class DepositRequest {
     private BigDecimal amount;
+    private Clerk clerk;
 
-    public BigDecimal getAmount() {
+    public Clerk getClerk() {
+		return clerk;
+	}
+
+	public BigDecimal getAmount() {
         return amount;
     }
 

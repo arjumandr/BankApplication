@@ -26,26 +26,41 @@ public class Transaction {
 
 	@Enumerated(EnumType.STRING)
     private TransactionType transactionType;
+	
+	@Enumerated(EnumType.STRING)
+	private TransactionStatus staus;
+	
     private BigDecimal amount;
     private LocalDateTime date;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id_fk", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("account-transactions")
     private Account account;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clerk_id_fk", nullable = false)
+    @JsonBackReference("clerk-transactions")
     private Clerk clerk;
 
-	public Transaction(TransactionType transactionType, BigDecimal amount, 
-						LocalDateTime date, Account account,
-						Clerk clerk) {
+	
+
+	public Transaction(TransactionType transactionType, TransactionStatus staus,
+			BigDecimal amount, LocalDateTime date, Account account, Clerk clerk) {
 		this.transactionType = transactionType;
+		this.staus = staus;
 		this.amount = amount;
 		this.date = date;
 		this.account = account;
 		this.clerk = clerk;
+	}
+
+	public TransactionStatus getStaus() {
+		return staus;
+	}
+
+	public void setStaus(TransactionStatus staus) {
+		this.staus = staus;
 	}
 
 	public Transaction() {}

@@ -53,29 +53,37 @@ public class Account {
 		this.name = name;
 	}
 	public BigDecimal getBalance() {
-		return balance;
+		return balance;	
 	}
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	} 
 	@JsonIgnore
+	@JsonManagedReference("account-transactions")
 	public List<Transaction> getTransactions(){
 		return transactionList;
 	}
-	public void addTransaction(TransactionType type, BigDecimal amount) {
-		Transaction tx = new Transaction();
-        tx.setTransactionType(type);
-        tx.setAmount(amount);
-        tx.setDate(LocalDateTime.now());
-        tx.setAccount(this);
+	public void addTransaction(
+	        TransactionType type,
+	        BigDecimal amount,
+	        Clerk clerk
+	) {
+	    Transaction tx = new Transaction();
+	    tx.setTransactionType(type);
+	    tx.setAmount(amount);
+	    tx.setDate(LocalDateTime.now());
+	    tx.setAccount(this);
+	    tx.setClerk(clerk);
 
-        transactionList.add(tx);
+	    // approval rule
+	    if (amount.compareTo(BigDecimal.valueOf(200_000)) > 0 &&
+	        type == TransactionType.WITHDRAWAL) {
+	        tx.setStaus(TransactionStatus.PENDING);
+	    } else {
+	        tx.setStaus(TransactionStatus.APPROVED);
+	    }
 
-        // update balance here
-//        if (type == TransactionType.DEPOSIT) {
-//            balance = balance.add(amount);
-//        } else {
-//            balance = balance.subtract(amount);
-//        }
+	    transactionList.add(tx);
 	}
+
 }

@@ -3,6 +3,7 @@ package com.bankApp.entities;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,6 +28,7 @@ public class Clerk {
     private Manager manager;
 	
 	@OneToMany(mappedBy = "clerk")
+	@JsonManagedReference("clerk-transactions")
     private List<Transaction> transactions;
 	
 	public Clerk(Integer clerkId, String clerkName, Manager manager, List<Transaction> transactions) {

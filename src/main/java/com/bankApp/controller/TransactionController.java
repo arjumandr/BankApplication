@@ -35,18 +35,19 @@ public class TransactionController {
 		transactionService.transfer(
 	        request.getFromAccId(),
 	        request.getToAccId(),
-	        request.getAmount()
+	        request.getAmount(),
+	        request.getClerk()
 	    );
 	}
 	
 	@PostMapping(path = "accounts/{accId}/deposit")
     public void deposit(@PathVariable int accId, @RequestBody DepositRequest depositReq) {
-		transactionService.deposit(accId, depositReq.getAmount());
+		transactionService.deposit(accId, depositReq.getAmount(), depositReq.getClerk());
     }
 	
 	@PostMapping(path = "accounts/{accId}/withdraw")
     public void withdraw(@PathVariable int accId, @RequestBody WithdrawRequest withdrawReq) {
-		transactionService.withdraw(accId, withdrawReq.getAmount());
+		transactionService.withdraw(accId, withdrawReq.getAmount(), withdrawReq.getClerk());
     }
 	
 	@GetMapping(path = "accounts/{accId}/getTransaction")
