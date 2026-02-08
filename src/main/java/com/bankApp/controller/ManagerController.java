@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,8 +44,12 @@ public class ManagerController {
 		managerService.deleteManager(id);
     }
 	
-	@PostMapping(path = "updateManager")
-    public void updateManager(Manager manager) {
-		managerService.updateManager(manager);
-    }
+	@PutMapping(path = "updateManager/{id}")
+	public void updateManager(
+	        @PathVariable Integer id,
+	        @RequestBody Manager manager) {
+
+	    manager.setManagerId(id);
+	    managerService.updateManager(manager);
+	}
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.bankApp.entities.Account;
+import com.bankApp.entities.Manager;
+import com.bankApp.exceptions.BankEmployeeNotFoundException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,10 +39,14 @@ public class AccountDaoImpl implements AccountDao {
 	@Override
 	public void updateAccount(Account account) {
 	    
-	    if (account == null || account.getId() == null) {
-	    	throw new IllegalArgumentException("Account or account ID is invalid");
+		Account existing = em.find(Account.class, account.getId());
+
+	    if (existing == null) {
+	        throw new BankEmployeeNotFoundException("Manager not found");
 	    }
-	    em.merge(account);
+
+	    if (existing.getName() != null)
+	        existing.setName(account.getName());
 
 	    // AccountDataAccessException to be made later
 	//  catch (PersistenceException e) {

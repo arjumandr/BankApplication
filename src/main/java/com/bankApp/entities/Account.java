@@ -27,7 +27,7 @@ public class Account {
     private BigDecimal balance;
     
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonManagedReference("account-transactions")
 	private List<Transaction> transactionList =new ArrayList<>();
     
 	public Account(Integer id, String name, BigDecimal balance) {
@@ -78,9 +78,9 @@ public class Account {
 	    // approval rule
 	    if (amount.compareTo(BigDecimal.valueOf(200_000)) > 0 &&
 	        type == TransactionType.WITHDRAWAL) {
-	        tx.setStaus(TransactionStatus.PENDING);
+	        tx.setStatus(TransactionStatus.PENDING);
 	    } else {
-	        tx.setStaus(TransactionStatus.APPROVED);
+	        tx.setStatus(TransactionStatus.APPROVED);
 	    }
 
 	    transactionList.add(tx);

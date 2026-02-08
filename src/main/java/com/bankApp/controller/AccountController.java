@@ -51,8 +51,9 @@ public class AccountController {
     	accountService.deleteAccount(id);
     }
 	
-	@PostMapping(path = "updateAccount")
-    public void updateAccount(Account account) {
+	@PostMapping(path = "updateAccount/{id}")
+    public void updateAccount(@PathVariable Integer id, @RequestBody Account account) {
+		account.setId(id);
     	accountService.updateAccount(account);
     }
     	

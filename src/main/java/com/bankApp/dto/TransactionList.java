@@ -10,12 +10,9 @@ public class TransactionList {
     private String transactionType;
     private LocalDateTime date;
 
-    public TransactionList(BigDecimal bigDecimal, TransactionType transactionType2, LocalDateTime localDateTime) {
-    }
-
-    public TransactionList(BigDecimal amount, String transactionType, LocalDateTime date) {
-        this.amount = amount;
-        this.transactionType = transactionType;
+    public TransactionList(BigDecimal amount, TransactionType transactionType, LocalDateTime date) {
+    	this.amount = amount;
+        this.transactionType = transactionType.toString();
         this.date = date;
     }
 

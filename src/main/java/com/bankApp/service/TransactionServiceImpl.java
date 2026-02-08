@@ -20,7 +20,6 @@ import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
-
 public class TransactionServiceImpl implements TransactionService{
 	private AccountDao accountDao;
 	private AccountService accountService;
@@ -39,7 +38,7 @@ public class TransactionServiceImpl implements TransactionService{
 	    Transaction tx =
 	        fromAcc.getTransactions().get(fromAcc.getTransactions().size() - 1);
 
-	    if (tx.getStaus() == TransactionStatus.APPROVED) {
+	    if (tx.getStatus() == TransactionStatus.APPROVED) {
 	        fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
 	        toAcc.setBalance(toAcc.getBalance().add(amount));
 
@@ -72,7 +71,7 @@ public class TransactionServiceImpl implements TransactionService{
 	        acc.getTransactions().get(acc.getTransactions().size() - 1);
 
 	    // only deduct if approved
-	    if (lastTx.getStaus() == TransactionStatus.APPROVED) {
+	    if (lastTx.getStatus() == TransactionStatus.APPROVED) {
 	        acc.setBalance(acc.getBalance().subtract(amount));
 	    }
 
@@ -81,18 +80,26 @@ public class TransactionServiceImpl implements TransactionService{
 	
 	@Override
 	public List<TransactionList> getTransactions(int id){
-//		return accountDao.getTransactions(id);
 		Account account = accountDao.getById(id);
 		if(account == null) {
 			throw new BankAccountNotFoundException("Account not found");
 		}
 		
 		List<Transaction> transactions = account.getTransactions();
+		System.out.println(
+			    "TX: " + transactions.get(0).getAmount()
+			);
 
 		// Map to DTO for REST response
 		List<TransactionList> dtoList = transactions.stream()
-		        .map(tx -> new TransactionList(tx.getAmount(), tx.getTransactionType(), tx.getDate()))
-		        .collect(Collectors.toList());
+//		        .map(tx -> new TransactionList(tx.getAmount(), tx.getTransactionType(), tx.getDate()))
+//		        .collect(Collectors.toList());
+				.map(tx -> new TransactionList(
+				        tx.getAmount(),
+				        tx.getTransactionType(),
+				        tx.getDate()
+				    ))
+				    .collect(Collectors.toList());
 		
 		return dtoList;
 		

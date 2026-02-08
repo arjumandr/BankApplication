@@ -21,7 +21,7 @@ import com.bankApp.service.TransactionService;
  */
 
 @RestController
-@RequestMapping(path = "v1/transaction")
+@RequestMapping(path = "v1")
 public class TransactionController {
 	
 	private TransactionService transactionService;

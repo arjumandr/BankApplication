@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,13 +23,16 @@ import jakarta.persistence.Table;
 public class Transaction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "transaction_id")
 	private Integer transactionId;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "transaction_type")
     private TransactionType transactionType;
 	
+	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
-	private TransactionStatus staus;
+	private TransactionStatus status;
 	
     private BigDecimal amount;
     private LocalDateTime date;
@@ -45,22 +49,22 @@ public class Transaction {
 
 	
 
-	public Transaction(TransactionType transactionType, TransactionStatus staus,
+	public Transaction(TransactionType transactionType, TransactionStatus status,
 			BigDecimal amount, LocalDateTime date, Account account, Clerk clerk) {
 		this.transactionType = transactionType;
-		this.staus = staus;
+		this.status = status;
 		this.amount = amount;
 		this.date = date;
 		this.account = account;
 		this.clerk = clerk;
 	}
 
-	public TransactionStatus getStaus() {
-		return staus;
+	public TransactionStatus getStatus() {
+		return status;
 	}
 
-	public void setStaus(TransactionStatus staus) {
-		this.staus = staus;
+	public void setStatus(TransactionStatus staus) {
+		this.status = staus;
 	}
 
 	public Transaction() {}

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.bankApp.entities.Clerk;
+import com.bankApp.entities.Manager;
 import com.bankApp.exceptions.BankEmployeeNotFoundException;
 
 import jakarta.persistence.EntityManager;
@@ -49,15 +50,21 @@ public class ClerkDaoImpl implements ClerkDao {
 
 	@Override
 	public void updateClerk(Clerk clerk) {
-		try{
-			if(clerk == null) {
-			throw new IllegalArgumentException("Clerk or clerk Id is invalid.");
-			}
-		em.merge(clerk);
-		} catch (IllegalArgumentException ex) {
+//		try{
+//			if(clerk == null) {
+//			throw new IllegalArgumentException("Clerk or clerk Id is invalid.");
+//			}
+//		em.merge(clerk);
+//		} catch (IllegalArgumentException ex) {
+//			throw new BankEmployeeNotFoundException("Clerk not found.");
+//		}
+		Clerk existing = em.find(Clerk.class, clerk.getClerkId());
+		if(existing == null) {
 			throw new BankEmployeeNotFoundException("Clerk not found.");
 		}
-		
+		if(clerk.getClerkName() != null) {
+			existing.setClerkName(clerk.getClerkName());
+		}		
 	}
 
 }

@@ -67,15 +67,26 @@ public class ManagerDaoImpl implements ManagerDao {
 
 	@Override
 	public void updateManager(Manager manager) {
-		try{
-			if(manager == null) {
-				throw new IllegalArgumentException("Manager or manager Id is not found.");
-			}
-			em.merge(manager);
-		}
-		catch(IllegalArgumentException ex) {
-			throw new BankEmployeeNotFoundException("Manager not found");
-		}
+//		try{
+//			if(manager == null) {
+//				throw new IllegalArgumentException("Manager or manager Id is not found.");
+//			}
+//			em.merge(manager);
+//		}
+//		catch(IllegalArgumentException ex) {
+//			throw new BankEmployeeNotFoundException("Manager not found");
+//		}
+		Manager existing = em.find(Manager.class, manager.getManagerId());
+
+	    if (existing == null) {
+	        throw new BankEmployeeNotFoundException("Manager not found");
+	    }
+
+	    if (manager.getManagerName() != null)
+	        existing.setManagerName(manager.getManagerName());
+
+	    if (manager.getManagerEmail() != null)
+	        existing.setManagerEmail(manager.getManagerEmail());
 	}
 
 }
