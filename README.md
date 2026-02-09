@@ -7,14 +7,6 @@
   A Spring Boot–based banking application for managing accounts, transactions, clerks, and managers.
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Java-17%2B-orange" />
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen" />
-  <img src="https://img.shields.io/badge/Build-Maven-blue" />
-  <img src="https://img.shields.io/badge/Database-MySQL%20%7C%20H2-lightgrey" />
-  <img src="https://img.shields.io/badge/License-MIT-green" />
-</p>
-
 ---
 
 ## Overview
@@ -130,8 +122,9 @@ spring.jpa.hibernate.ddl-auto=update
   "clerkName": "Alice Smith",
   "managerId": 1
 }
+```
 
-**Entity Relationships**
+### Entity Relationships
 
 Manager ↔ Clerk
 
@@ -145,7 +138,7 @@ JSON Handling
 
 @JsonManagedReference / @JsonBackReference prevent infinite recursion
 
-**Exception Handling**
+### Exception Handling
 
 Service Layer
 
