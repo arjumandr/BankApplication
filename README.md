@@ -17,7 +17,7 @@
 
 ---
 
-## 📖 Overview
+## Overview
 
 The **Bank Management System** is a Spring Boot application that follows a **layered architecture**:
 
@@ -32,7 +32,7 @@ The system ensures **data integrity**, **clean API design**, and avoids common i
 
 ---
 
-## ✨ Features
+## Features
 
 - **Account Management**
   - Create, read, update, and delete accounts
@@ -51,7 +51,7 @@ The system ensures **data integrity**, **clean API design**, and avoids common i
 
 ---
 
-## 🛠 Technologies
+## Technologies
 
 - **Java 17+**
 - **Spring Boot 3.x**
@@ -62,7 +62,7 @@ The system ensures **data integrity**, **clean API design**, and avoids common i
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -76,3 +76,91 @@ The system ensures **data integrity**, **clean API design**, and avoids common i
    ```bash
    git clone https://github.com/your-username/bank-management-system.git
    cd bank-management-system
+
+2. **Configure the DB**
+spring.datasource.url=jdbc:mysql://localhost:3306/bankdb
+spring.datasource.username=root
+spring.datasource.password=yourpassword
+spring.jpa.hibernate.ddl-auto=update
+
+## API Endpoints
+
+### Account APIs
+
+| Method | Endpoint              | Description        |
+|------|----------------------|--------------------|
+| GET  | /v1/accounts         | Get all accounts   |
+| GET  | /v1/accounts/{id}    | Get account by ID  |
+| POST | /v1/accounts         | Create account     |
+| PUT  | /v1/accounts/{id}    | Update account     |
+| DELETE | /v1/accounts/{id}  | Delete account     |
+
+---
+
+### Manager APIs
+
+| Method | Endpoint              | Description        |
+|------|----------------------|--------------------|
+| GET  | /v1/managers         | Get all managers   |
+| GET  | /v1/managers/{id}    | Get manager by ID  |
+| POST | /v1/managers         | Create manager     |
+| PUT  | /v1/managers/{id}    | Update manager     |
+| DELETE | /v1/managers/{id}  | Delete manager     |
+
+---
+
+### Clerk APIs
+
+| Method | Endpoint              | Description        |
+|------|----------------------|--------------------|
+| GET  | /v1/clerks           | Get all clerks     |
+| GET  | /v1/clerks/{id}      | Get clerk by ID    |
+| POST | /v1/clerks           | Create clerk       |
+| PUT  | /v1/clerks/{id}      | Update clerk       |
+| DELETE | /v1/clerks/{id}    | Delete clerk       |
+
+---
+
+### Clerk DTO Example
+
+> Use DTOs to avoid transient entity issues
+
+```json
+{
+  "clerkName": "Alice Smith",
+  "managerId": 1
+}
+
+**Entity Relationships**
+
+Manager ↔ Clerk
+
+One manager → many clerks (bidirectional)
+
+Account ↔ Transaction
+
+One account → many transactions
+
+JSON Handling
+
+@JsonManagedReference / @JsonBackReference prevent infinite recursion
+
+**Exception Handling**
+
+Service Layer
+
+Throws business exceptions (e.g., BankAccountNotFoundException)
+
+DAO Layer
+
+Handles persistence exceptions
+
+Controller Layer
+
+Returns proper HTTP status codes:
+
+400 Bad Request
+
+404 Not Found
+
+500 Internal Server Error
