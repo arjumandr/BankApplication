@@ -69,6 +69,9 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public void updateAccount(Account account) {
 		accountDao.updateAccount(account);	
-		
+	}
+	
+	public List<Account> getAccountsForManager(Integer managerId) {
+	    return accountDao.findByManagerManagerId(managerId);
 	}
 }

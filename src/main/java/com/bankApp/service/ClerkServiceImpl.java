@@ -3,6 +3,7 @@ package com.bankApp.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bankApp.dao.ClerkDao;
@@ -21,10 +22,12 @@ public class ClerkServiceImpl implements ClerkService{
 	
 	private ClerkDao clerkDao;
 	private ManagerService managerService;
+    private final PasswordEncoder passwordEncoder;
 	
-	public ClerkServiceImpl(ClerkDao clerkDao, ManagerService managerService) {
+	public ClerkServiceImpl(ClerkDao clerkDao, ManagerService managerService, PasswordEncoder passwordEncoder) {
 		this.clerkDao = clerkDao;
 		this.managerService = managerService;
+		this.passwordEncoder=  passwordEncoder;
 	}
 
 	@Override
@@ -45,10 +48,12 @@ public class ClerkServiceImpl implements ClerkService{
 	public void addClerk(ClerkCreateRequest clerkreq) {
 	    try {
 	    	Manager manager = managerService.getById(clerkreq.managerId);
+	    	String encodedPass = passwordEncoder.encode(clerkreq.password);
 		    Clerk clerk = new Clerk();
 		    clerk.setClerkName(clerkreq.clerkName);
 		    clerk.setManager(manager);
 		    clerk.setTransactions(new ArrayList<>());
+		    clerk.setPassword(encodedPass);
 		    clerkDao.addClerk(clerk);
 	    } catch (PersistenceException ex) {
 	        // Wrap lower-level exceptions in a service-specific exception if desired

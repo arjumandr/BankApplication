@@ -45,14 +45,14 @@ public class ManagerServiceImpl implements ManagerService{
 	@Override
 	public void addManager(Manager manager) {
 		if (manager == null) {
-	        throw new IllegalArgumentException("Account cannot be null");
+	        throw new IllegalArgumentException("Manager cannot be null");
 	    }
 	    try {
 	    	managerDao.addManager(manager);
 	    } catch (PersistenceException ex) {
 	        // Wrap lower-level exceptions in a service-specific exception if desired
 //	    	System.out.println("Persistence exc occurred.");
-	        throw new RuntimeException("Failed to add account", ex);
+	        throw new RuntimeException("Failed to add manager", ex);
 	    }
 	}
 

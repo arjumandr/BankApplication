@@ -27,9 +27,20 @@ public class Manager {
 
     @OneToMany
     @JoinColumn(name = "manager_id_fk")
+    @JsonManagedReference
     private List<Account> accounts;
+    
+    private String password; 
 
-    public Manager() {}
+    public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Manager() {}
 
 	public Manager(String name, String email, List<Account> accounts) {
 		this.managerName = name;

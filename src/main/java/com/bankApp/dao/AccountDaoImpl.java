@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.bankApp.entities.Account;
-import com.bankApp.entities.Manager;
 import com.bankApp.exceptions.BankEmployeeNotFoundException;
 
 import jakarta.persistence.EntityManager;
@@ -73,4 +72,12 @@ public class AccountDaoImpl implements AccountDao {
 			Account account = em.find(Account.class, id);
 			em.remove(account);
 	}
+	@Override
+	public List<Account> findByManagerManagerId(Integer managerId) {
+	    String jpql = "SELECT a FROM Account a WHERE a.manager.managerId = :managerId";
+	    return em.createQuery(jpql, Account.class)
+	             .setParameter("managerId", managerId)
+	             .getResultList();
+	}
+
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.bankApp.entities.Clerk;
-import com.bankApp.entities.Manager;
 import com.bankApp.exceptions.BankEmployeeNotFoundException;
 
 import jakarta.persistence.EntityManager;

@@ -30,6 +30,15 @@ public class Clerk {
 	@OneToMany(mappedBy = "clerk")
 	@JsonManagedReference("clerk-transactions")
     private List<Transaction> transactions;
+
+	private String password; 
+	
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	
 	public Clerk(Integer clerkId, String clerkName, Manager manager, List<Transaction> transactions) {
 		this.clerkName = clerkName;
