@@ -3,6 +3,7 @@ package com.bankApp.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.bankApp.dto.PendingTransactionDto;
 import com.bankApp.dto.TransactionList;
 import com.bankApp.entities.Clerk;
 import com.bankApp.entities.Transaction;
@@ -14,4 +15,5 @@ public interface TransactionService {
     void withdraw(int accId, BigDecimal amount, Clerk clerk);
     List<TransactionList> getTransactions(int id);
 	Transaction getById(int transactionId);
+    List<PendingTransactionDto> findPendingTransactionsForManager(Integer managerId);
 }

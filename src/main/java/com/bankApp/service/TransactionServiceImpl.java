@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.bankApp.dao.AccountDao;
+import com.bankApp.dao.TransactionDao;
+import com.bankApp.dto.PendingTransactionDto;
 import com.bankApp.dto.TransactionList;
 import com.bankApp.entities.Account;
 import com.bankApp.entities.Clerk;
@@ -23,10 +25,12 @@ import jakarta.transaction.Transactional;
 public class TransactionServiceImpl implements TransactionService{
 	private AccountDao accountDao;
 	private AccountService accountService;
+	private TransactionDao transactionDao;
 	
-	public TransactionServiceImpl(AccountDao accountDao, AccountService accountService) {
+	public TransactionServiceImpl(AccountDao accountDao, AccountService accountService, TransactionDao transactionDao) {
 		this.accountDao = accountDao;
 		this.accountService = accountService;
+		this.transactionDao = transactionDao;
 	}
 
 	@Override
@@ -34,7 +38,12 @@ public class TransactionServiceImpl implements TransactionService{
 	    Account fromAcc = accountService.getById(fromAccId);
 	    Account toAcc = accountService.getById(toAccId);
 
-	    fromAcc.addTransaction(TransactionType.TRANSFER, amount, clerk);
+	    fromAcc.addTransaction(TransactionType.TRANSFER_OUT, amount, clerk);
+	    if (fromAcc.getBalance().compareTo(amount) < 0) {
+	        throw new IllegalArgumentException(
+	            "Insufficient balance in account " + fromAcc.getId()
+	        );
+	    }
 	    Transaction tx =
 	        fromAcc.getTransactions().get(fromAcc.getTransactions().size() - 1);
 
@@ -42,7 +51,7 @@ public class TransactionServiceImpl implements TransactionService{
 	        fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
 	        toAcc.setBalance(toAcc.getBalance().add(amount));
 
-	        toAcc.addTransaction(TransactionType.TRANSFER, amount, clerk);
+	        toAcc.addTransaction(TransactionType.TRANSFER_IN, amount, clerk);
 	    }
 
 	    accountDao.updateAccount(fromAcc);
@@ -110,4 +119,12 @@ public class TransactionServiceImpl implements TransactionService{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<PendingTransactionDto> findPendingTransactionsForManager(Integer managerId) {
+        return transactionDao.findPendingTransactionsForManager(
+                TransactionStatus.PENDING,
+                managerId
+        );
+    }
 }

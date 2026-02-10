@@ -84,8 +84,7 @@ public class Account {
 	    tx.setClerk(clerk);
 
 	    // approval rule
-	    if (amount.compareTo(BigDecimal.valueOf(200_000)) > 0 &&
-	        type == TransactionType.WITHDRAWAL) {
+	    if (amount.compareTo(BigDecimal.valueOf(200_000)) > 0) {
 	        tx.setStatus(TransactionStatus.PENDING);
 	    } else {
 	        tx.setStatus(TransactionStatus.APPROVED);

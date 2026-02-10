@@ -3,7 +3,6 @@ package com.bankApp.entities;
 public enum TransactionType {
     DEPOSIT,
     WITHDRAWAL,
-    TRANSFER,
-//    PAYMENT
-    // mayber later
+    TRANSFER_OUT,
+    TRANSFER_IN
 }
