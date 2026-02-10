@@ -157,4 +157,3 @@ Returns proper HTTP status codes:
 404 Not Found
 
 500 Internal Server Error
->>>>>>> c1480a48d4784aaacd842915aae3a2d46bb3e5d1
