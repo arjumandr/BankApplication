@@ -1,6 +1,7 @@
 package com.bankApp.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.bankApp.entities.Clerk;
 
@@ -10,4 +11,5 @@ public interface ClerkDao {
 	void addClerk(Clerk clerk);
 	void deleteClerk(Integer id);
 	void updateClerk(Clerk clerk);
+	Optional<Clerk> findByClerkName(String username);
 }

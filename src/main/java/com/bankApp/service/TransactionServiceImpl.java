@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.bankApp.dao.AccountDao;
 import com.bankApp.dao.TransactionDao;
+import com.bankApp.dto.DepositTransactionDto;
 import com.bankApp.dto.PendingTransactionDto;
 import com.bankApp.dto.TransactionList;
+import com.bankApp.dto.TransferTransactionDto;
+import com.bankApp.dto.WithdrawTransactionDto;
 import com.bankApp.entities.Account;
 import com.bankApp.entities.Clerk;
 import com.bankApp.entities.Transaction;
@@ -26,18 +29,23 @@ public class TransactionServiceImpl implements TransactionService{
 	private AccountDao accountDao;
 	private AccountService accountService;
 	private TransactionDao transactionDao;
+	private ClerkService clerkService;
 	
-	public TransactionServiceImpl(AccountDao accountDao, AccountService accountService, TransactionDao transactionDao) {
+	public TransactionServiceImpl(AccountDao accountDao, AccountService accountService, 
+									TransactionDao transactionDao, ClerkService clerkService) {
 		this.accountDao = accountDao;
 		this.accountService = accountService;
 		this.transactionDao = transactionDao;
+		this.clerkService = clerkService;
 	}
 
 	@Override
-	public void transfer(int fromAccId, int toAccId, BigDecimal amount, Clerk clerk) {
+	public TransferTransactionDto transfer(int fromAccId, int toAccId, BigDecimal amount, Integer clerkId) {
 	    Account fromAcc = accountService.getById(fromAccId);
 	    Account toAcc = accountService.getById(toAccId);
 
+	    Clerk clerk = clerkService.getById(clerkId);
+	    
 	    fromAcc.addTransaction(TransactionType.TRANSFER_OUT, amount, clerk);
 	    if (fromAcc.getBalance().compareTo(amount) < 0) {
 	        throw new IllegalArgumentException(
@@ -46,6 +54,7 @@ public class TransactionServiceImpl implements TransactionService{
 	    }
 	    Transaction tx =
 	        fromAcc.getTransactions().get(fromAcc.getTransactions().size() - 1);
+	    transactionDao.save(tx);
 
 	    if (tx.getStatus() == TransactionStatus.APPROVED) {
 	        fromAcc.setBalance(fromAcc.getBalance().subtract(amount));
@@ -56,35 +65,68 @@ public class TransactionServiceImpl implements TransactionService{
 
 	    accountDao.updateAccount(fromAcc);
 	    accountDao.updateAccount(toAcc);
+	    
+	    return new TransferTransactionDto(
+	    		tx.getTransactionId(),
+	    	    tx.getAmount(),
+	    	    tx.getDate(),
+	    	    tx.getStatus(),
+	    	    tx.getTransactionType(),
+	    	    fromAccId,
+	    	    toAccId,
+	    	    clerk.getClerkId()
+	    );
 	}
 
 	@Override
-	public void deposit(int accId, BigDecimal amount, Clerk clerk) {
+	public DepositTransactionDto deposit(int accId, BigDecimal amount, Integer clerkId) {
 	    Account acc = accountService.getById(accId);
-
 	    acc.setBalance(acc.getBalance().add(amount));
-	    acc.addTransaction(TransactionType.DEPOSIT, amount, clerk);
-
+	    
+	    Clerk clerk = clerkService.getById(clerkId);
+	    Transaction tx = acc.addTransaction(TransactionType.DEPOSIT, amount, clerk);
+	    transactionDao.save(tx);
+	    
 	    accountDao.updateAccount(acc);
+	    return new DepositTransactionDto(
+	    		tx.getTransactionId(),
+	    	    tx.getAmount(),
+	    	    tx.getDate(),
+	    	    tx.getStatus(),
+	    	    tx.getTransactionType(),
+	    	    accId,
+	    	    clerk.getClerkId()
+	    );
 	}
 	
 	// added new logic to ensure mgr approval is asked for withdrawal > 2 lakhs
 	@Override
-	public void withdraw(int accId, BigDecimal amount, Clerk clerk) {
+	public WithdrawTransactionDto withdraw(int accId, BigDecimal amount, Integer clerkId) {
 	    Account acc = accountService.getById(accId);
 
 	    // create transaction first
-	    acc.addTransaction(TransactionType.WITHDRAWAL, amount, clerk);
-
-	    Transaction lastTx =
-	        acc.getTransactions().get(acc.getTransactions().size() - 1);
+	    Clerk clerk = clerkService.getById(clerkId);
+	    Transaction tx = acc.addTransaction(TransactionType.WITHDRAWAL, amount, clerk);
+	    transactionDao.save(tx);
+//	    Transaction lastTx =
+//	        acc.getTransactions().get(acc.getTransactions().size() - 1);
 
 	    // only deduct if approved
-	    if (lastTx.getStatus() == TransactionStatus.APPROVED) {
+	    if (tx.getStatus() == TransactionStatus.APPROVED) {
 	        acc.setBalance(acc.getBalance().subtract(amount));
 	    }
 
 	    accountDao.updateAccount(acc);
+	    
+	    return new WithdrawTransactionDto(
+	    	    tx.getTransactionId(),
+	    	    tx.getAmount(),
+	    	    tx.getDate(),
+	    	    tx.getStatus(),
+	    	    tx.getTransactionType(),
+	    	    accId,
+	    	    clerk.getClerkId()
+	    	);
 	}
 	
 	@Override

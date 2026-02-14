@@ -10,14 +10,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bankApp.dto.DepositRequest;
+import com.bankApp.dto.DepositTransactionDto;
 import com.bankApp.dto.TransactionList;
 import com.bankApp.dto.TransferRequest;
+import com.bankApp.dto.TransferTransactionDto;
 import com.bankApp.dto.WithdrawRequest;
+import com.bankApp.dto.WithdrawTransactionDto;
 import com.bankApp.service.TransactionService;
 
 /*
  * This controller has additional methods introduced in the service layer pertaining to our business logic
- * TODO: rewrite all localhost links on postman to test these, add "transaction"
+ * TODO: 
  */
 
 @RestController
@@ -31,23 +34,23 @@ public class TransactionController {
 	}
 	
 	@PostMapping("transfer")
-	public void transfer(@RequestBody TransferRequest request) {
-		transactionService.transfer(
+	public TransferTransactionDto transfer(@RequestBody TransferRequest request) {
+		return transactionService.transfer(
 	        request.getFromAccId(),
 	        request.getToAccId(),
 	        request.getAmount(),
-	        request.getClerk()
+	        request.getClerkId()
 	    );
 	}
 	
 	@PostMapping(path = "accounts/{accId}/deposit")
-    public void deposit(@PathVariable int accId, @RequestBody DepositRequest depositReq) {
-		transactionService.deposit(accId, depositReq.getAmount(), depositReq.getClerk());
+    public DepositTransactionDto deposit(@PathVariable int accId, @RequestBody DepositRequest depositReq) {
+		return transactionService.deposit(accId, depositReq.getAmount(), depositReq.getClerkId());
     }
 	
 	@PostMapping(path = "accounts/{accId}/withdraw")
-    public void withdraw(@PathVariable int accId, @RequestBody WithdrawRequest withdrawReq) {
-		transactionService.withdraw(accId, withdrawReq.getAmount(), withdrawReq.getClerk());
+    public WithdrawTransactionDto withdraw(@PathVariable int accId, @RequestBody WithdrawRequest withdrawReq) {
+		return transactionService.withdraw(accId, withdrawReq.getAmount(), withdrawReq.getClerkId());
     }
 	
 	@GetMapping(path = "accounts/{accId}/getTransaction")

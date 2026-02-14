@@ -11,7 +11,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleAccountNotFoundException(BankAccountNotFoundException ex ){
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
-	// 404 = not found
+	// 404 - not found 
+	@ExceptionHandler(BankEmployeeNotFoundException.class)
+	public ResponseEntity<String> handleAccountNotFoundException(BankEmployeeNotFoundException ex ){
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+	}
+	// 405 = method not allowed
 	
 	@ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleBadRequest(IllegalArgumentException ex) {

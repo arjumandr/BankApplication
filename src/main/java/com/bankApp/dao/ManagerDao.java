@@ -1,6 +1,7 @@
 package com.bankApp.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.bankApp.dto.ManagerClerkDTO;
 import com.bankApp.entities.Manager;
@@ -11,4 +12,5 @@ public interface ManagerDao {
 	void addManager(Manager manager);
 	void deleteManager(Integer id);
 	void updateManager(Manager manager);
+	Optional<Manager> findByManagerEmail(String username);
 }

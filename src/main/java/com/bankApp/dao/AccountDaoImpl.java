@@ -30,15 +30,19 @@ public class AccountDaoImpl implements AccountDao {
 	public Account getById(int id) {
 		Account account = em.find(Account.class, id);
 	    if (account == null) {
-	        throw new EntityNotFoundException("Account not found");
+	        throw new BankEmployeeNotFoundException("Account not found");
 	    }
 	    return account;
 	}
 	
 	@Override
 	public void updateAccount(Account account) {
-	    
-		Account existing = em.find(Account.class, account.getId());
+		Account existing = new Account();
+	    try {
+	    	existing = em.find(Account.class, account.getId());
+	    } catch (PersistenceException ex) {
+	    	throw new IllegalArgumentException("Account not found");
+	    }
 
 	    if (existing == null) {
 	        throw new BankEmployeeNotFoundException("Manager not found");
@@ -70,7 +74,11 @@ public class AccountDaoImpl implements AccountDao {
 	@Override
 	public void deleteAccount(Integer id) {
 			Account account = em.find(Account.class, id);
-			em.remove(account);
+			try{
+				em.remove(account);
+			} catch(PersistenceException ex) {
+				System.out.println("Invalid account id.");
+			}
 	}
 	@Override
 	public List<Account> findByManagerManagerId(Integer managerId) {

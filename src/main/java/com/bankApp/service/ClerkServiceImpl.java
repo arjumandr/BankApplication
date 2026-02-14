@@ -12,7 +12,6 @@ import com.bankApp.entities.Clerk;
 import com.bankApp.entities.Manager;
 import com.bankApp.exceptions.BankEmployeeNotFoundException;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 
@@ -32,11 +31,12 @@ public class ClerkServiceImpl implements ClerkService{
 
 	@Override
 	public Clerk getById(Integer id) {
-		try {
-			return clerkDao.getById(id);
-		} catch(EntityNotFoundException ex) {
-			throw new BankEmployeeNotFoundException("Clerk with id= "+id+" not found.");
-		}
+//		try {
+//			return clerkDao.getById(id);
+//		} catch(BankEmployeeNotFoundException ex) {
+//			throw new BankEmployeeNotFoundException("Clerk with id= "+id+" not found.");
+//		}
+		return clerkDao.getById(id);
 	}
 
 	@Override

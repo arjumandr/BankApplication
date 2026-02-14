@@ -1,6 +1,7 @@
 package com.bankApp.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,7 @@ import com.bankApp.exceptions.BankEmployeeNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TypedQuery;
 
 @Repository
 public class ManagerDaoImpl implements ManagerDao {
@@ -88,5 +90,35 @@ public class ManagerDaoImpl implements ManagerDao {
 	    if (manager.getManagerEmail() != null)
 	        existing.setManagerEmail(manager.getManagerEmail());
 	}
+
+//	@Override
+//	public Optional<Manager> findByManagerEmail(String username) {
+//		Manager manager = em.find(Manager.class, username);
+//		if(manager == null) {
+//			throw new BankEmployeeNotFoundException("Manager with this name= "+username+" doesnt exist.");
+//		}
+//		return Optional.of(manager);
+//	}
+	@Override
+	public Optional<Manager> findByManagerEmail(String email) {
+
+	    TypedQuery<Manager> query = em.createQuery(
+	        "SELECT m FROM Manager m WHERE m.managerEmail = :email",
+	        Manager.class
+	    );
+
+	    query.setParameter("email", email);
+
+	    List<Manager> result = query.getResultList();
+
+	    if (result.isEmpty()) {
+	        throw new BankEmployeeNotFoundException(
+	            "Manager with email " + email + " doesn't exist."
+	        );
+	    }
+
+	    return Optional.of(result.get(0));
+	}
+
 
 }

@@ -71,7 +71,7 @@ public class Account {
 	public List<Transaction> getTransactions(){
 		return transactionList;
 	}
-	public void addTransaction(
+	public Transaction addTransaction(
 	        TransactionType type,
 	        BigDecimal amount,
 	        Clerk clerk
@@ -91,6 +91,8 @@ public class Account {
 	    }
 
 	    transactionList.add(tx);
+	    
+	    return tx;	
 	}
 
 }
